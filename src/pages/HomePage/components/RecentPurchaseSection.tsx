@@ -40,8 +40,13 @@ function RecentPurchaseSection() {
       >
         <ErrorBoundary fallback={<ErrorSection />}>
           <Suspense>
-            <SuspenseQuery {...recentProductsQueryOptions}>
-              {({ data: { recentProducts } }) => {
+            <SuspenseQuery
+              {...recentProductsQueryOptions}
+              select={data => {
+                return sumPricesByProductId(data.recentProducts);
+              }}
+            >
+              {({ data: recentProducts }) => {
                 return recentProducts.map(({ id, thumbnail, name, price }) => (
                   <RecentPurchaseItem key={id} id={id} thumbnail={thumbnail} name={name} price={price} />
                 ));
@@ -68,4 +73,19 @@ function RecentPurchaseItem({ id, thumbnail, name, price }: RecentProduct) {
       </Flex>
     </Flex>
   );
+}
+
+function sumPricesByProductId(recentProducts: RecentProduct[]): RecentProduct[] {
+  const productMap = new Map<number, RecentProduct>();
+
+  for (const product of recentProducts) {
+    const existing = productMap.get(product.id);
+    if (existing) {
+      existing.price += product.price;
+    } else {
+      productMap.set(product.id, { ...product });
+    }
+  }
+
+  return Array.from(productMap.values());
 }

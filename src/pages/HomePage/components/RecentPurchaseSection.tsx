@@ -43,29 +43,7 @@ function RecentPurchaseSection() {
             <SuspenseQuery {...recentProductsQueryOptions}>
               {({ data: { recentProducts } }) => {
                 return recentProducts.map(({ id, thumbnail, name, price }) => (
-                  <Flex
-                    key={id}
-                    css={{
-                      gap: 4,
-                    }}
-                  >
-                    <styled.img
-                      src={thumbnail}
-                      alt="item"
-                      css={{
-                        w: '60px',
-                        h: '60px',
-                        objectFit: 'cover',
-                        rounded: 'xl',
-                      }}
-                    />
-                    <Flex flexDir="column" gap={1}>
-                      <Text variant="B2_Medium">{name}</Text>
-                      <Text variant="H1_Bold">
-                        <PriceDisplay usdPrice={price} />
-                      </Text>
-                    </Flex>
-                  </Flex>
+                  <RecentPurchaseItem key={id} id={id} thumbnail={thumbnail} name={name} price={price} />
                 ));
               }}
             </SuspenseQuery>
@@ -77,3 +55,17 @@ function RecentPurchaseSection() {
 }
 
 export default RecentPurchaseSection;
+
+function RecentPurchaseItem({ id, thumbnail, name, price }: RecentProduct) {
+  return (
+    <Flex key={id} css={{ gap: 4 }}>
+      <styled.img src={thumbnail} alt="item" css={{ w: '60px', h: '60px', objectFit: 'cover', rounded: 'xl' }} />
+      <Flex flexDir="column" gap={1}>
+        <Text variant="B2_Medium">{name}</Text>
+        <Text variant="H1_Bold">
+          <PriceDisplay usdPrice={price} />
+        </Text>
+      </Flex>
+    </Flex>
+  );
+}

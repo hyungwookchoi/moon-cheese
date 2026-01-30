@@ -25,7 +25,7 @@ function formatPrice({
   exchangeRate: { KRW: number; USD: number };
 }) {
   if (currency === 'USD') {
-    return price.toLocaleString('en-US');
+    return `$${price.toLocaleString('en-US')}`;
   }
 
   const roundedPrice = Math.round(price * exchangeRate.KRW);

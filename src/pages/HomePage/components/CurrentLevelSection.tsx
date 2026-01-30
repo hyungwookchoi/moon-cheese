@@ -6,19 +6,19 @@ import { ErrorBoundary, Suspense } from '@suspensive/react';
 import ErrorSection from '@/components/ErrorSection';
 import { SuspenseQueries } from '@suspensive/react-query';
 
+type GRADE = 'EXPLORER' | 'PILOT' | 'COMMANDER';
+
 const userQueryOptions = queryOptions({
   queryKey: ['user'],
   queryFn: () => {
-    return http.get<{ point: number; grade: 'EXPLORER' | 'PILOT' | 'COMMANDER' }>('/api/me');
+    return http.get<{ point: number; grade: GRADE }>('/api/me');
   },
 });
 
 const gradePointQueryOptions = queryOptions({
   queryKey: ['gradePoint'],
   queryFn: () => {
-    return http.get<{ gradePointList: Array<{ type: 'EXPLORER' | 'PILOT' | 'COMMANDER'; minPoint: number }> }>(
-      '/api/grade/point'
-    );
+    return http.get<{ gradePointList: Array<{ type: GRADE; minPoint: number }> }>('/api/grade/point');
   },
 });
 
@@ -46,7 +46,7 @@ function CurrentLevelSection() {
                     <ProgressBar
                       value={getProgress({
                         point: user.point,
-                        nextGradePoint: getNextGradePoint({ point: user.point, gradePointList }),
+                        nextGradePoint: getPointsToNextGrade({ point: user.point, gradePointList }),
                       })}
                       size="xs"
                     />
@@ -61,7 +61,7 @@ function CurrentLevelSection() {
                       <Box textAlign="right">
                         <Text variant="C1_Bold">다음 등급까지</Text>
                         <Text variant="C2_Regular" color="neutral.03_gray">
-                          {getNextGradePoint({ point: user.point, gradePointList })}p
+                          {getPointsToNextGrade({ point: user.point, gradePointList })}p
                         </Text>
                       </Box>
                     </Flex>
@@ -83,15 +83,19 @@ function capitalizeFirstLetter(string: string) {
 }
 
 function getProgress({ point, nextGradePoint }: { point: number; nextGradePoint: number }) {
-  return point / nextGradePoint;
+  const nextGradeMinPoint = point + nextGradePoint;
+  if (nextGradeMinPoint === 0) {
+    return 0;
+  }
+  return point / nextGradeMinPoint;
 }
 
-function getNextGradePoint({
+function getPointsToNextGrade({
   point,
   gradePointList,
 }: {
   point: number;
-  gradePointList: Array<{ type: 'EXPLORER' | 'PILOT' | 'COMMANDER'; minPoint: number }>;
+  gradePointList: Array<{ type: GRADE; minPoint: number }>;
 }) {
   const nextGrade = gradePointList.find(grade => grade.minPoint > point);
   return nextGrade ? nextGrade.minPoint - point : 0;

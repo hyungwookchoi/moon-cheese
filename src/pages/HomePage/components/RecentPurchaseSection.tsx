@@ -1,11 +1,12 @@
 import { Flex, styled } from 'styled-system/jsx';
 import { Spacing, Text } from '@/ui-lib';
-import { PriceDisplay } from './PriceDisplay';
 import { http } from '@/utils/http';
 import { queryOptions } from '@tanstack/react-query';
 import { ErrorBoundary, Suspense } from '@suspensive/react';
 import { SuspenseQuery } from '@suspensive/react-query';
 import ErrorSection from '@/components/ErrorSection';
+
+import { GetFormattedPrice } from './GetFormattedPrice';
 
 type RecentProduct = {
   id: number;
@@ -42,13 +43,25 @@ function RecentPurchaseSection() {
           <Suspense>
             <SuspenseQuery
               {...recentProductsQueryOptions}
-              select={data => {
-                return sumPricesByProductId(data.recentProducts);
+              select={({ recentProducts }) => {
+                return sumPricesByProductId(recentProducts);
               }}
             >
               {({ data: recentProducts }) => {
                 return recentProducts.map(({ id, thumbnail, name, price }) => (
-                  <RecentPurchaseItem key={id} id={id} thumbnail={thumbnail} name={name} price={price} />
+                  <Flex key={id} css={{ gap: 4 }}>
+                    <styled.img
+                      src={thumbnail}
+                      alt="item"
+                      css={{ w: '60px', h: '60px', objectFit: 'cover', rounded: 'xl' }}
+                    />
+                    <Flex flexDir="column" gap={1}>
+                      <Text variant="B2_Medium">{name}</Text>
+                      <GetFormattedPrice price={price}>
+                        {price => <Text variant="H1_Bold">{price}</Text>}
+                      </GetFormattedPrice>
+                    </Flex>
+                  </Flex>
                 ));
               }}
             </SuspenseQuery>
@@ -60,20 +73,6 @@ function RecentPurchaseSection() {
 }
 
 export default RecentPurchaseSection;
-
-function RecentPurchaseItem({ id, thumbnail, name, price }: RecentProduct) {
-  return (
-    <Flex key={id} css={{ gap: 4 }}>
-      <styled.img src={thumbnail} alt="item" css={{ w: '60px', h: '60px', objectFit: 'cover', rounded: 'xl' }} />
-      <Flex flexDir="column" gap={1}>
-        <Text variant="B2_Medium">{name}</Text>
-        <Text variant="H1_Bold">
-          <PriceDisplay usdPrice={price} />
-        </Text>
-      </Flex>
-    </Flex>
-  );
-}
 
 function sumPricesByProductId(recentProducts: RecentProduct[]): RecentProduct[] {
   const productMap = new Map<number, RecentProduct>();

@@ -3,7 +3,37 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Box, Grid, styled } from 'styled-system/jsx';
 import ProductItem from '../components/ProductItem';
-import { PriceDisplay } from './PriceDisplay';
+import { GetFormattedPrice } from './GetFormattedPrice';
+
+const PRODUCT_LIST = [
+  {
+    id: 1,
+    name: '월레스의 오리지널 웬슬리데일',
+    price: 12.99,
+    thumbnail: '/moon-cheese-images/cheese-1-1.jpg',
+    description: '월레스가 아침마다 찾는 바로 그 치즈!',
+    rating: 4,
+    stock: 3,
+  },
+  {
+    id: 2,
+    name: '로봇 크런치 비스킷',
+    price: 5,
+    thumbnail: '/moon-cheese-images/cracker-1-1.jpg',
+    description: '로봇 캐릭터 모양의 귀리 비스킷',
+    rating: 3,
+    stock: 3,
+  },
+  {
+    id: 3,
+    name: '문라이트 카모마일 티',
+    price: 7,
+    thumbnail: '/moon-cheese-images/tea-1-1.jpg',
+    description: '달빛 같은 부드러운 허브차',
+    rating: 5,
+    stock: 3,
+  },
+];
 
 function ProductListSection() {
   const [currentTab, setCurrentTab] = useState('all');
@@ -27,61 +57,25 @@ function ProductListSection() {
         </SubGNB.List>
       </SubGNB.Root>
       <Grid gridTemplateColumns="repeat(2, 1fr)" rowGap={9} columnGap={4} p={5}>
-        <ProductItem.Root onClick={() => handleClickProduct(1)}>
-          <ProductItem.Image src="/moon-cheese-images/cheese-1-1.jpg" alt="월레스의 오리지널 웬슬리데일" />
-          <ProductItem.Info title="월레스의 오리지널 웬슬리데일" description="월레스가 아침마다 찾는 바로 그 치즈!" />
-          <ProductItem.Meta>
-            <ProductItem.MetaLeft>
-              <ProductItem.Rating rating={4} />
-              <ProductItem.Price>
-                <PriceDisplay usdPrice={12.99} />
-              </ProductItem.Price>
-            </ProductItem.MetaLeft>
-          </ProductItem.Meta>
-          <Counter.Root>
-            <Counter.Minus onClick={() => {}} disabled={true} />
-            <Counter.Display value={3} />
-            <Counter.Plus onClick={() => {}} />
-          </Counter.Root>
-        </ProductItem.Root>
-
-        <ProductItem.Root onClick={() => handleClickProduct(2)}>
-          <ProductItem.Image src="/moon-cheese-images/cracker-1-1.jpg" alt="로봇 크런치 비스킷" />
-          <ProductItem.Info title="로봇 크런치 비스킷" description="로봇 캐릭터 모양의 귀리 비스킷" />
-          <ProductItem.Meta>
-            <ProductItem.MetaLeft>
-              <ProductItem.Rating rating={3} />
-              <ProductItem.Price>
-                <PriceDisplay usdPrice={5} />
-              </ProductItem.Price>
-            </ProductItem.MetaLeft>
-            <ProductItem.FreeTag type="gluten" />
-          </ProductItem.Meta>
-          <Counter.Root>
-            <Counter.Minus onClick={() => {}} disabled={true} />
-            <Counter.Display value={3} />
-            <Counter.Plus onClick={() => {}} />
-          </Counter.Root>
-        </ProductItem.Root>
-
-        <ProductItem.Root onClick={() => handleClickProduct(3)}>
-          <ProductItem.Image src="/moon-cheese-images/tea-1-1.jpg" alt="문라이트 카모마일 티" />
-          <ProductItem.Info title="문라이트 카모마일 티" description="달빛 같은 부드러운 허브차" />
-          <ProductItem.Meta>
-            <ProductItem.MetaLeft>
-              <ProductItem.Rating rating={5} />
-              <ProductItem.Price>
-                <PriceDisplay usdPrice={7} />
-              </ProductItem.Price>
-            </ProductItem.MetaLeft>
-            <ProductItem.FreeTag type="caffeine" />
-          </ProductItem.Meta>
-          <Counter.Root>
-            <Counter.Minus onClick={() => {}} disabled={true} />
-            <Counter.Display value={3} />
-            <Counter.Plus onClick={() => {}} />
-          </Counter.Root>
-        </ProductItem.Root>
+        {PRODUCT_LIST.map(product => (
+          <ProductItem.Root key={product.id} onClick={() => handleClickProduct(product.id)}>
+            <ProductItem.Image src={product.thumbnail} alt={product.name} />
+            <ProductItem.Info title={product.name} description={product.description} />
+            <ProductItem.Meta>
+              <ProductItem.MetaLeft>
+                <ProductItem.Rating rating={product.rating} />
+                <GetFormattedPrice price={product.price}>
+                  {price => <ProductItem.Price>{price}</ProductItem.Price>}
+                </GetFormattedPrice>
+              </ProductItem.MetaLeft>
+            </ProductItem.Meta>
+            <Counter.Root>
+              <Counter.Minus onClick={() => {}} disabled={true} />
+              <Counter.Display value={product.stock} />
+              <Counter.Plus onClick={() => {}} />
+            </Counter.Root>
+          </ProductItem.Root>
+        ))}
       </Grid>
     </styled.section>
   );

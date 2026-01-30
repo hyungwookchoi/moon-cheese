@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Box, Grid, styled } from 'styled-system/jsx';
 import ProductItem from '../components/ProductItem';
+import { PriceDisplay } from './PriceDisplay';
 
 function ProductListSection() {
   const [currentTab, setCurrentTab] = useState('all');
@@ -32,7 +33,9 @@ function ProductListSection() {
           <ProductItem.Meta>
             <ProductItem.MetaLeft>
               <ProductItem.Rating rating={4} />
-              <ProductItem.Price>$12.99</ProductItem.Price>
+              <ProductItem.Price>
+                <PriceDisplay usdPrice={12.99} />
+              </ProductItem.Price>
             </ProductItem.MetaLeft>
           </ProductItem.Meta>
           <Counter.Root>
@@ -48,7 +51,9 @@ function ProductListSection() {
           <ProductItem.Meta>
             <ProductItem.MetaLeft>
               <ProductItem.Rating rating={3} />
-              <ProductItem.Price>5.00</ProductItem.Price>
+              <ProductItem.Price>
+                <PriceDisplay usdPrice={5} />
+              </ProductItem.Price>
             </ProductItem.MetaLeft>
             <ProductItem.FreeTag type="gluten" />
           </ProductItem.Meta>
@@ -65,7 +70,9 @@ function ProductListSection() {
           <ProductItem.Meta>
             <ProductItem.MetaLeft>
               <ProductItem.Rating rating={5} />
-              <ProductItem.Price>$7.00</ProductItem.Price>
+              <ProductItem.Price>
+                <PriceDisplay usdPrice={7} />
+              </ProductItem.Price>
             </ProductItem.MetaLeft>
             <ProductItem.FreeTag type="caffeine" />
           </ProductItem.Meta>

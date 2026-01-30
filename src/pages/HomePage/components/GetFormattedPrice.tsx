@@ -25,5 +25,9 @@ function formatPrice({
   exchangeRate: { KRW: number; USD: number };
 }) {
   const convertedPrice = currency === 'USD' ? price : Math.floor(price * exchangeRate.KRW);
-  return convertedPrice.toLocaleString(currency === 'USD' ? 'en-US' : 'ko-KR');
+  return convertedPrice.toLocaleString(currency === 'USD' ? 'en-US' : 'ko-KR', {
+    style: 'currency',
+    currency: currency,
+    maximumFractionDigits: currency === 'KRW' ? 0 : 2,
+  });
 }

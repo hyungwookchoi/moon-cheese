@@ -1,26 +1,9 @@
 import { Box, Flex, styled } from 'styled-system/jsx';
 import { ProgressBar, Spacing, Text } from '@/ui-lib';
-import { queryOptions } from '@tanstack/react-query';
-import { http } from '@/utils/http';
 import { ErrorBoundary, Suspense } from '@suspensive/react';
 import ErrorSection from '@/components/ErrorSection';
 import { SuspenseQueries } from '@suspensive/react-query';
-
-type GRADE = 'EXPLORER' | 'PILOT' | 'COMMANDER';
-
-const userQueryOptions = queryOptions({
-  queryKey: ['user'],
-  queryFn: () => {
-    return http.get<{ point: number; grade: GRADE }>('/api/me');
-  },
-});
-
-const gradePointQueryOptions = queryOptions({
-  queryKey: ['gradePoint'],
-  queryFn: () => {
-    return http.get<{ gradePointList: Array<{ type: GRADE; minPoint: number }> }>('/api/grade/point');
-  },
-});
+import { gradePointQueryOptions, userQueryOptions, type GRADE } from '../apis/queryOptions';
 
 function CurrentLevelSection() {
   return (

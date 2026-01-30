@@ -4,6 +4,7 @@ import { ErrorBoundary, Suspense } from '@suspensive/react';
 import ErrorSection from '@/components/ErrorSection';
 import { SuspenseQueries } from '@suspensive/react-query';
 import { gradePointQueryOptions, userQueryOptions, type GRADE } from '../apis/queryOptions';
+import { capitalize } from 'es-toolkit/string';
 
 function CurrentLevelSection() {
   return (
@@ -24,7 +25,7 @@ function CurrentLevelSection() {
 
                 <Box bg="background.01_white" css={{ px: 5, py: 4, rounded: '2xl' }}>
                   <Flex flexDir="column" gap={2}>
-                    <Text variant="H2_Bold">{capitalizeFirstLetter(user.grade)}</Text>
+                    <Text variant="H2_Bold">{capitalize(user.grade)}</Text>
 
                     <ProgressBar
                       value={getProgress({
@@ -60,10 +61,6 @@ function CurrentLevelSection() {
 }
 
 export default CurrentLevelSection;
-
-function capitalizeFirstLetter(string: string) {
-  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-}
 
 function getProgress({ point, nextGradePoint }: { point: number; nextGradePoint: number }) {
   const nextGradeMinPoint = point + nextGradePoint;

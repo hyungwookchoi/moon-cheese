@@ -1,6 +1,25 @@
 import { Flex, styled } from 'styled-system/jsx';
 import { Spacing, Text } from '@/ui-lib';
 import { PriceDisplay } from './PriceDisplay';
+import { http } from '@/utils/http';
+import { queryOptions } from '@tanstack/react-query';
+import { ErrorBoundary, Suspense } from '@suspensive/react';
+import { SuspenseQuery } from '@suspensive/react-query';
+import ErrorSection from '@/components/ErrorSection';
+
+type RecentProduct = {
+  id: number;
+  thumbnail: string;
+  name: string;
+  price: number;
+};
+
+const recentProductsQueryOptions = queryOptions({
+  queryKey: ['recentProductList'],
+  queryFn: () => {
+    return http.get<{ recentProducts: RecentProduct[] }>('/api/recent/product/list');
+  },
+});
 
 function RecentPurchaseSection() {
   return (
@@ -19,51 +38,39 @@ function RecentPurchaseSection() {
         }}
         direction={'column'}
       >
-        <Flex
-          css={{
-            gap: 4,
-          }}
-        >
-          <styled.img
-            src="/moon-cheese-images/cheese-1-1.jpg"
-            alt="item"
-            css={{
-              w: '60px',
-              h: '60px',
-              objectFit: 'cover',
-              rounded: 'xl',
-            }}
-          />
-          <Flex flexDir="column" gap={1}>
-            <Text variant="B2_Medium">월레스의 오리지널 웬슬리데일</Text>
-            <Text variant="H1_Bold">
-              <PriceDisplay usdPrice={12.99} />
-            </Text>
-          </Flex>
-        </Flex>
-
-        <Flex
-          css={{
-            gap: 4,
-          }}
-        >
-          <styled.img
-            src="/moon-cheese-images/cheese-2-1.jpg"
-            alt="item"
-            css={{
-              w: '60px',
-              h: '60px',
-              objectFit: 'cover',
-              rounded: 'xl',
-            }}
-          />
-          <Flex flexDir="column" gap={1}>
-            <Text variant="B2_Medium">그랜드 데이 아웃 체다</Text>
-            <Text variant="H1_Bold">
-              <PriceDisplay usdPrice={14.87} />
-            </Text>
-          </Flex>
-        </Flex>
+        <ErrorBoundary fallback={<ErrorSection />}>
+          <Suspense>
+            <SuspenseQuery {...recentProductsQueryOptions}>
+              {({ data: { recentProducts } }) => {
+                return recentProducts.map(({ id, thumbnail, name, price }) => (
+                  <Flex
+                    key={id}
+                    css={{
+                      gap: 4,
+                    }}
+                  >
+                    <styled.img
+                      src={thumbnail}
+                      alt="item"
+                      css={{
+                        w: '60px',
+                        h: '60px',
+                        objectFit: 'cover',
+                        rounded: 'xl',
+                      }}
+                    />
+                    <Flex flexDir="column" gap={1}>
+                      <Text variant="B2_Medium">{name}</Text>
+                      <Text variant="H1_Bold">
+                        <PriceDisplay usdPrice={price} />
+                      </Text>
+                    </Flex>
+                  </Flex>
+                ));
+              }}
+            </SuspenseQuery>
+          </Suspense>
+        </ErrorBoundary>
       </Flex>
     </styled.section>
   );

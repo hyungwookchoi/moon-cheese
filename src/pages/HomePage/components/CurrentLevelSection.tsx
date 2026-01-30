@@ -83,7 +83,7 @@ function capitalizeFirstLetter(string: string) {
 }
 
 function getProgress({ point, nextGradePoint }: { point: number; nextGradePoint: number }) {
-  return (point / nextGradePoint) * 100;
+  return point / nextGradePoint;
 }
 
 function getNextGradePoint({

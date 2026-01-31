@@ -7,7 +7,7 @@ import { GetFormattedPrice } from './GetFormattedPrice';
 import { ErrorBoundary, Suspense } from '@suspensive/react';
 import ErrorSection from '@/components/ErrorSection';
 import { SuspenseQuery } from '@suspensive/react-query';
-import { productsQueryOptions } from '../apis/queryOptions';
+import { productsQueryOptions } from '../../../apis/queryOptions';
 import { useCart } from '@/providers/CartProvider';
 
 function ProductListSection() {

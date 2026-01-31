@@ -3,7 +3,7 @@ import { ProgressBar, Spacing, Text } from '@/ui-lib';
 import { ErrorBoundary, Suspense } from '@suspensive/react';
 import ErrorSection from '@/components/ErrorSection';
 import { SuspenseQueries } from '@suspensive/react-query';
-import { gradePointQueryOptions, userQueryOptions, type GRADE } from '../apis/queryOptions';
+import { gradePointQueryOptions, userQueryOptions, type GRADE } from '../../../apis/queryOptions';
 import { capitalize } from 'es-toolkit/string';
 
 function CurrentLevelSection() {

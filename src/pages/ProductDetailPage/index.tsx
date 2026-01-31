@@ -52,7 +52,9 @@ function ProductDetailPage() {
                 data: { recommendProductIds },
               },
             ]) => {
-              const recommendedProducts = products.filter(product => recommendProductIds.includes(product.id));
+              const recommendedProducts = products.filter(product =>
+                isRecommendedProduct(product.id, recommendProductIds)
+              );
               return <RecommendationSection products={recommendedProducts} />;
             }}
           </SuspenseQueries>
@@ -63,3 +65,7 @@ function ProductDetailPage() {
 }
 
 export default ProductDetailPage;
+
+function isRecommendedProduct(productId: number, recommendProductIds: number[]) {
+  return recommendProductIds.includes(productId);
+}

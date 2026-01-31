@@ -32,11 +32,7 @@ function ProductDetailPage() {
 
                   <Spacing size={2.5} />
 
-                  <ProductDetailSection
-                    description={
-                      '"달 표면에서 가 수확한 특별한 구멍낸 크래커." 달의 분화구를 연상시키는 다지한과 고소한 풍미가 특징인 크래커. 치즈와의 궁합을 고려한 절묘한 비율로, 어느 데어링 메뉴도 잘 어울립니다.'
-                    }
-                  />
+                  <ProductDetailSection description={product.detailDescription} />
                 </>
               );
             }}

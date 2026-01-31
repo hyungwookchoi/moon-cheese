@@ -44,3 +44,52 @@ export const gradePointQueryOptions = queryOptions({
   queryKey: ['gradePoint'],
   queryFn: fetchGradePoint,
 });
+
+type Cheese = {
+  id: number;
+  name: string;
+  category: 'CHEESE';
+  stock: number;
+  price: number;
+  description: string;
+  detailDescription: string;
+  images: string[];
+  rating: number;
+};
+
+type Cracker = {
+  id: number;
+  name: string;
+  category: 'CRACKER';
+  stock: number;
+  price: number;
+  description: string;
+  detailDescription: string;
+  images: string[];
+  rating: number;
+  isGlutenFree?: boolean;
+};
+
+type Tea = {
+  id: number;
+  name: string;
+  category: 'TEA';
+  stock: number;
+  price: number;
+  description: string;
+  detailDescription: string;
+  images: string[];
+  rating: number;
+  isCaffeineFree?: boolean;
+};
+
+type Product = Cheese | Cracker | Tea;
+
+const fetchProducts = () => {
+  return http.get<{ products: Product[] }>('/api/product/list');
+};
+
+export const productsQueryOptions = queryOptions({
+  queryKey: ['products'],
+  queryFn: fetchProducts,
+});

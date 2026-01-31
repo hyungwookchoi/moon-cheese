@@ -45,9 +45,11 @@ function ShoppingCartSection() {
 
                 return (
                   <Separated by={<Divider color="border.01_gray" />}>
-                    {cartItems.map(item => (
-                      <ShoppingCartItemRow key={item.id} product={item} />
-                    ))}
+                    {cartItems.length > 0 ? (
+                      cartItems.map(item => <ShoppingCartItemRow key={item.id} product={item} />)
+                    ) : (
+                      <Text variant="C1_Medium">장바구니에 상품이 없습니다.</Text>
+                    )}
                   </Separated>
                 );
               }}

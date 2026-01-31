@@ -3,6 +3,7 @@ import PageLayout from '@/layout/PageLayout';
 import HomePage from './pages/HomePage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ShoppingCartPage from './pages/ShoppingCartPage';
+import invariant from 'tiny-invariant';
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
+        loader: ({ params }) => {
+          invariant(params.id, 'productId is required');
+          return { productId: Number(params.id) };
+        },
         path: '/product/:id',
         element: <ProductDetailPage />,
       },

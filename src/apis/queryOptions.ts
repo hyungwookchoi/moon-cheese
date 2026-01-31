@@ -93,3 +93,23 @@ export const productsQueryOptions = queryOptions({
   queryKey: ['products'],
   queryFn: fetchProducts,
 });
+
+const fetchProduct = (productId: number) => {
+  return http.get<Product>(`/api/product/${productId}`);
+};
+
+export const productQueryOptions = (productId: number) =>
+  queryOptions({
+    queryKey: ['product', productId],
+    queryFn: () => fetchProduct(productId),
+  });
+
+const fetchRecommendedProducts = (productId: number) => {
+  return http.get<{ recommendProductIds: number[] }>(`/api/product/recommend/${productId}`);
+};
+
+export const recommendedProductsQueryOptions = (productId: number) =>
+  queryOptions({
+    queryKey: ['recommendedProducts', productId],
+    queryFn: () => fetchRecommendedProducts(productId),
+  });

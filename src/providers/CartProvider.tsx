@@ -7,8 +7,8 @@ export type CartItem = {
 
 type CartState = {
   items: CartItem[];
-  addItem: (productId: number) => void;
-  removeItem: (productId: number) => void;
+  addItem: (params: { productId: number; quantity: number }) => void;
+  removeItem: (params: { productId: number; quantity: number }) => void;
   getItemQuantity: (productId: number) => number;
   getTotalQuantity: () => number;
   clearCart: () => void;
@@ -18,29 +18,29 @@ type CartState = {
 export const useCart = create<CartState>((set, get) => ({
   items: [],
 
-  addItem: (productId: number) => {
+  addItem: ({ productId, quantity }) => {
     set(state => {
       const existingItem = state.items.find(item => item.productId === productId);
       if (existingItem) {
         return {
           items: state.items.map(item =>
-            item.productId === productId ? { ...item, quantity: item.quantity + 1 } : item
+            item.productId === productId ? { ...item, quantity: item.quantity + quantity } : item
           ),
         };
       }
-      return { items: [...state.items, { productId, quantity: 1 }] };
+      return { items: [...state.items, { productId, quantity }] };
     });
   },
 
-  removeItem: (productId: number) => {
+  removeItem: ({ productId, quantity }) => {
     set(state => {
       const existingItem = state.items.find(item => item.productId === productId);
-      if (!existingItem || existingItem.quantity <= 1) {
+      if (!existingItem || existingItem.quantity <= quantity) {
         return { items: state.items.filter(item => item.productId !== productId) };
       }
       return {
         items: state.items.map(item =>
-          item.productId === productId ? { ...item, quantity: item.quantity - 1 } : item
+          item.productId === productId ? { ...item, quantity: item.quantity - quantity } : item
         ),
       };
     });

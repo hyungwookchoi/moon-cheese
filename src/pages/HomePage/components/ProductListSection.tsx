@@ -60,9 +60,15 @@ function ProductListSection() {
                           })()}
                         </ProductItem.Meta>
                         <Counter.Root>
-                          <Counter.Minus onClick={() => removeItem(product.id)} disabled={quantity === 0} />
+                          <Counter.Minus
+                            onClick={() => removeItem({ productId: product.id, quantity: 1 })}
+                            disabled={quantity === 0}
+                          />
                           <Counter.Display value={quantity} />
-                          <Counter.Plus onClick={() => addItem(product.id)} disabled={quantity >= product.stock} />
+                          <Counter.Plus
+                            onClick={() => addItem({ productId: product.id, quantity: 1 })}
+                            disabled={quantity >= product.stock}
+                          />
                         </Counter.Root>
                       </ProductItem.Root>
                     );

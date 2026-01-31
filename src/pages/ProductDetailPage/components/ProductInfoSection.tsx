@@ -50,7 +50,7 @@ function ProductInfoSection({ id, name, category, rating, price, quantity }: Pro
         <Counter.Root>
           <Counter.Minus onClick={() => setCount(count - 1)} disabled={isInCart || count === 0} />
           <Counter.Display value={count} />
-          <Counter.Plus onClick={() => setCount(count + 1)} disabled={isInCart || count > quantity} />
+          <Counter.Plus onClick={() => setCount(count + 1)} disabled={isInCart || count >= quantity} />
         </Counter.Root>
       </Flex>
 
@@ -63,9 +63,9 @@ function ProductInfoSection({ id, name, category, rating, price, quantity }: Pro
         size="lg"
         onClick={() => {
           if (isInCart) {
-            removeItem(id);
+            removeItem({ productId: id, quantity: quantityInCart });
           } else {
-            addItem(id);
+            addItem({ productId: id, quantity: count });
           }
         }}
       >

@@ -83,7 +83,7 @@ type Tea = {
   isCaffeineFree?: boolean;
 };
 
-type Product = Cheese | Cracker | Tea;
+export type Product = Cheese | Cracker | Tea;
 
 const fetchProducts = () => {
   return http.get<{ products: Product[] }>('/api/product/list');

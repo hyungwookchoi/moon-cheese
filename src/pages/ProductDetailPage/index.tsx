@@ -23,6 +23,7 @@ function ProductDetailPage() {
                 <>
                   <ThumbnailSection images={product.images} />
                   <ProductInfoSection
+                    id={product.id}
                     name={product.name}
                     category={lowerCase(product.category) as TagType}
                     rating={product.rating}

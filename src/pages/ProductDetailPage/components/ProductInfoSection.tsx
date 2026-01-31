@@ -1,8 +1,11 @@
+import { useCart } from '@/providers/CartProvider';
 import { Button, Counter, RatingGroup, Spacing, Text } from '@/ui-lib';
 import Tag, { type TagType } from '@/ui-lib/components/tag';
+import { useState } from 'react';
 import { Box, Divider, Flex, Stack, styled } from 'styled-system/jsx';
 
 type ProductInfoSectionProps = {
+  id: number;
   name: string;
   category: TagType;
   rating: number;
@@ -10,7 +13,13 @@ type ProductInfoSectionProps = {
   quantity: number;
 };
 
-function ProductInfoSection({ name, category, rating, price, quantity }: ProductInfoSectionProps) {
+function ProductInfoSection({ id, name, category, rating, price, quantity }: ProductInfoSectionProps) {
+  const { getItemQuantity, addItem, removeItem } = useCart();
+  const quantityInCart = getItemQuantity(id);
+  const isInCart = quantityInCart > 0;
+
+  const [count, setCount] = useState(quantityInCart || 0);
+
   return (
     <styled.section css={{ bg: 'background.01_white', p: 5 }}>
       {/* 상품 정보 */}
@@ -36,17 +45,28 @@ function ProductInfoSection({ name, category, rating, price, quantity }: Product
           </Text>
         </Flex>
         <Counter.Root>
-          <Counter.Minus onClick={() => {}} disabled={true} />
-          <Counter.Display value={3} />
-          <Counter.Plus onClick={() => {}} />
+          <Counter.Minus onClick={() => setCount(count - 1)} disabled={isInCart || count === 0} />
+          <Counter.Display value={count} />
+          <Counter.Plus onClick={() => setCount(count + 1)} disabled={isInCart || count > quantity} />
         </Counter.Root>
       </Flex>
 
       <Spacing size={5} />
 
       {/* 장바구니 버튼 */}
-      <Button fullWidth color="primary" size="lg">
-        장바구니
+      <Button
+        fullWidth
+        color="primary"
+        size="lg"
+        onClick={() => {
+          if (isInCart) {
+            removeItem(id);
+          } else {
+            addItem(id);
+          }
+        }}
+      >
+        {isInCart ? '장바구니에서 제거' : '장바구니 담기'}
       </Button>
     </styled.section>
   );

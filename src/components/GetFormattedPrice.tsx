@@ -1,6 +1,6 @@
 import { useCurrency } from '@/providers/CurrencyProvider';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { exchangeRateQueryOptions } from '../../../apis/queryOptions';
+import { exchangeRateQueryOptions } from '../apis/queryOptions';
 
 interface Props {
   children: (price: string) => React.ReactNode;

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Box, Grid, styled } from 'styled-system/jsx';
 import ProductItem from '../components/ProductItem';
-import { GetFormattedPrice } from './GetFormattedPrice';
+import { GetFormattedPrice } from '@/components/GetFormattedPrice';
 import { ErrorBoundary, Suspense } from '@suspensive/react';
 import ErrorSection from '@/components/ErrorSection';
 import { SuspenseQuery } from '@suspensive/react-query';

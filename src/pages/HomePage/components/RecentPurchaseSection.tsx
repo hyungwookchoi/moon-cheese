@@ -6,7 +6,7 @@ import { ErrorBoundary, Suspense } from '@suspensive/react';
 import { SuspenseQuery } from '@suspensive/react-query';
 import ErrorSection from '@/components/ErrorSection';
 
-import { GetFormattedPrice } from './GetFormattedPrice';
+import { GetFormattedPrice } from '@/components/GetFormattedPrice';
 
 type RecentProduct = {
   id: number;

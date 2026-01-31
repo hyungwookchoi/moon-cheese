@@ -1,3 +1,4 @@
+import { GetFormattedPrice } from '@/components/GetFormattedPrice';
 import { useCart } from '@/providers/CartProvider';
 import { Button, Counter, RatingGroup, Spacing, Text } from '@/ui-lib';
 import Tag, { type TagType } from '@/ui-lib/components/tag';
@@ -30,7 +31,9 @@ function ProductInfoSection({ id, name, category, rating, price, quantity }: Pro
           <RatingGroup value={rating} readOnly label={`${rating.toFixed(1)}`} />
         </Stack>
         <Spacing size={4} />
-        <Text variant="H1_Bold">${price.toFixed(2)}</Text>
+        <GetFormattedPrice price={price}>
+          {formattedPrice => <Text variant="H1_Bold">{formattedPrice}</Text>}
+        </GetFormattedPrice>
       </Box>
 
       <Spacing size={5} />

@@ -5,8 +5,8 @@ import RecommendationSection from './components/RecommendationSection';
 import ThumbnailSection from './components/ThumbnailSection';
 import { ErrorBoundary, Suspense } from '@suspensive/react';
 import ErrorSection from '@/components/ErrorSection';
-import { productQueryOptions } from '@/apis/queryOptions';
-import { SuspenseQuery } from '@suspensive/react-query';
+import { productQueryOptions, productsQueryOptions, recommendedProductsQueryOptions } from '@/apis/queryOptions';
+import { SuspenseQueries, SuspenseQuery } from '@suspensive/react-query';
 import { lowerCase } from 'es-toolkit';
 import { useLoaderData } from 'react-router';
 
@@ -41,7 +41,23 @@ function ProductDetailPage() {
         </Suspense>
       </ErrorBoundary>
       <Spacing size={2.5} />
-      <RecommendationSection />
+      <ErrorBoundary fallback={<ErrorSection />}>
+        <Suspense>
+          <SuspenseQueries queries={[productsQueryOptions, recommendedProductsQueryOptions(productId)]}>
+            {([
+              {
+                data: { products },
+              },
+              {
+                data: { recommendProductIds },
+              },
+            ]) => {
+              const recommendedProducts = products.filter(product => recommendProductIds.includes(product.id));
+              return <RecommendationSection products={recommendedProducts} />;
+            }}
+          </SuspenseQueries>
+        </Suspense>
+      </ErrorBoundary>
     </>
   );
 }

@@ -47,6 +47,16 @@ function ProductListSection() {
                             {price => <ProductItem.Price>{price}</ProductItem.Price>}
                           </GetFormattedPrice>
                         </ProductItem.MetaLeft>
+                        {(() => {
+                          switch (product.category) {
+                            case 'CRACKER':
+                              return product.isGlutenFree ? <ProductItem.FreeTag type="gluten" /> : null;
+                            case 'TEA':
+                              return product.isCaffeineFree ? <ProductItem.FreeTag type="caffeine" /> : null;
+                            default:
+                              return null;
+                          }
+                        })()}
                       </ProductItem.Meta>
                       <Counter.Root>
                         <Counter.Minus onClick={() => {}} disabled={true} />

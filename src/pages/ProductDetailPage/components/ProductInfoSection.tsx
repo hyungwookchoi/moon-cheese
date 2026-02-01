@@ -1,5 +1,5 @@
 import { GetFormattedPrice } from '@/components/GetFormattedPrice';
-import { useCart } from '@/providers/CartProvider';
+import { useCart } from '@/stores/cart';
 import { Button, Counter, RatingGroup, Spacing, Text } from '@/ui-lib';
 import Tag, { type TagType } from '@/ui-lib/components/tag';
 import { useState } from 'react';

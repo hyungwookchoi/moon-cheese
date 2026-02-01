@@ -1,4 +1,4 @@
-import { useCart } from '@/providers/CartProvider';
+import { useCart } from '@/stores/cart';
 import { useCurrency } from '@/providers/CurrencyProvider';
 import Badge from '@/ui-lib/components/badge';
 import CurrencyToggle from '@/ui-lib/components/currency-toggle';

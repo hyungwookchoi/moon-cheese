@@ -113,3 +113,18 @@ export const recommendedProductsQueryOptions = (productId: number) =>
     queryKey: ['recommendedProducts', productId],
     queryFn: () => fetchRecommendedProducts(productId),
   });
+
+interface GradeShipping {
+  type: GRADE;
+  shippingFee: number;
+  freeShippingThreshold: number;
+}
+
+const fetchGradeShippingList = () => {
+  return http.get<{ gradeShippingList: GradeShipping[] }>('/api/grade/shipping');
+};
+
+export const gradeShippingListQueryOptions = queryOptions({
+  queryKey: ['gradeShippingList'],
+  queryFn: fetchGradeShippingList,
+});

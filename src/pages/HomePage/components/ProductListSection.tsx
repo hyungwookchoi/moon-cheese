@@ -8,7 +8,7 @@ import { ErrorBoundary, Suspense } from '@suspensive/react';
 import ErrorSection from '@/components/ErrorSection';
 import { SuspenseQuery } from '@suspensive/react-query';
 import { productsQueryOptions } from '../../../apis/queryOptions';
-import { useCart } from '@/providers/CartProvider';
+import { useCart } from '@/stores/cart';
 
 function ProductListSection() {
   const [currentTab, setCurrentTab] = useState('all');

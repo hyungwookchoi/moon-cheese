@@ -1,5 +1,5 @@
-import { productsQueryOptions, type Product } from '@/apis/queryOptions';
-import { useCart } from '@/providers/CartProvider';
+import { productsQueryOptions } from '@/apis/queryOptions';
+import { useCart, type CartItem } from '@/stores/cart';
 import { Button, Counter, Spacing, Text, type TagType } from '@/ui-lib';
 import { ErrorBoundary, Suspense } from '@suspensive/react';
 import { SuspenseQuery } from '@suspensive/react-query';
@@ -9,10 +9,9 @@ import { Divider, Flex, Stack, styled } from 'styled-system/jsx';
 import ErrorSection from '@/components/ErrorSection';
 import ShoppingCartItem from './ShoppingCartItem';
 import { GetFormattedPrice } from '@/components/GetFormattedPrice';
-import { useState } from 'react';
 
 function ShoppingCartSection() {
-  const { items, clearCart } = useCart();
+  const { items, addItem, removeItem, clearCart, getItemQuantity } = useCart();
 
   return (
     <styled.section css={{ p: 5, bgColor: 'background.01_white' }}>
@@ -34,23 +33,53 @@ function ShoppingCartSection() {
       >
         <ErrorBoundary fallback={<ErrorSection />}>
           <Suspense>
-            <SuspenseQuery {...productsQueryOptions}>
-              {({ data: { products } }) => {
-                const cartItems = items
-                  .map(item => {
-                    const product = products.find(p => p.id === item.productId);
-                    return product ? { ...product, quantity: item.quantity } : null;
-                  })
-                  .filter((item): item is NonNullable<typeof item> => item !== null);
-
-                return (
+            <SuspenseQuery
+              {...productsQueryOptions}
+              select={({ products }) => {
+                return products.filter(product => isInCart(product.id, items));
+              }}
+            >
+              {({ data: products }) => {
+                return products.length > 0 ? (
                   <Separated by={<Divider color="border.01_gray" />}>
-                    {cartItems.length > 0 ? (
-                      cartItems.map(item => <ShoppingCartItemRow key={item.id} product={item} />)
-                    ) : (
-                      <Text variant="C1_Medium">장바구니에 상품이 없습니다.</Text>
-                    )}
+                    {products.map(({ id, name, category, description, price, images, stock }) => {
+                      const quantity = getItemQuantity(id);
+
+                      return (
+                        <ShoppingCartItem.Root key={id}>
+                          <ShoppingCartItem.Image src={images[0]} alt={name} />
+                          <ShoppingCartItem.Content>
+                            <ShoppingCartItem.Info
+                              type={lowerCase(category) as TagType}
+                              title={name}
+                              description={description}
+                              onDelete={() => removeItem({ productId: id, quantity })}
+                            />
+                            <ShoppingCartItem.Footer>
+                              <GetFormattedPrice price={price}>
+                                {price => <ShoppingCartItem.Price>{price}</ShoppingCartItem.Price>}
+                              </GetFormattedPrice>
+                              <Counter.Root>
+                                <Counter.Minus
+                                  onClick={() => {
+                                    removeItem({ productId: id, quantity: 1 });
+                                  }}
+                                  disabled={quantity === 0}
+                                />
+                                <Counter.Display value={quantity} />
+                                <Counter.Plus
+                                  onClick={() => addItem({ productId: id, quantity: 1 })}
+                                  disabled={quantity >= stock}
+                                />
+                              </Counter.Root>
+                            </ShoppingCartItem.Footer>
+                          </ShoppingCartItem.Content>
+                        </ShoppingCartItem.Root>
+                      );
+                    })}
                   </Separated>
+                ) : (
+                  <Text variant="C1_Medium">장바구니에 상품이 없습니다.</Text>
                 );
               }}
             </SuspenseQuery>
@@ -63,39 +92,6 @@ function ShoppingCartSection() {
 
 export default ShoppingCartSection;
 
-function ShoppingCartItemRow({ product }: { product: Product }) {
-  const { addItem, removeItem, getItemQuantity } = useCart();
-  const quantity = getItemQuantity(product.id);
-
-  return (
-    <ShoppingCartItem.Root key={product.id}>
-      <ShoppingCartItem.Image src={product.images[0]} alt={product.name} />
-      <ShoppingCartItem.Content>
-        <ShoppingCartItem.Info
-          type={lowerCase(product.category) as TagType}
-          title={product.name}
-          description={product.description}
-          onDelete={() => removeItem({ productId: product.id, quantity })}
-        />
-        <ShoppingCartItem.Footer>
-          <GetFormattedPrice price={product.price}>
-            {price => <ShoppingCartItem.Price>{price}</ShoppingCartItem.Price>}
-          </GetFormattedPrice>
-          <Counter.Root>
-            <Counter.Minus
-              onClick={() => {
-                removeItem({ productId: product.id, quantity: 1 });
-              }}
-              disabled={quantity === 0}
-            />
-            <Counter.Display value={quantity} />
-            <Counter.Plus
-              onClick={() => addItem({ productId: product.id, quantity: 1 })}
-              disabled={quantity >= product.stock}
-            />
-          </Counter.Root>
-        </ShoppingCartItem.Footer>
-      </ShoppingCartItem.Content>
-    </ShoppingCartItem.Root>
-  );
+function isInCart(productId: number, products: CartItem[]) {
+  return products.some(product => product.productId === productId);
 }

@@ -1,37 +1,95 @@
-import { useState } from 'react';
 import { Flex, Stack, styled } from 'styled-system/jsx';
 import { Spacing, Text } from '@/ui-lib';
 import { DeliveryIcon, RocketIcon } from '@/ui-lib/components/icons';
+import { ErrorBoundary, Suspense } from '@suspensive/react';
+import { SuspenseQueries } from '@suspensive/react-query';
+import { userQueryOptions, gradeShippingListQueryOptions, productsQueryOptions, type GRADE } from '@/apis/queryOptions';
+import { useCart, type CartItem } from '@/stores/cart';
+import ErrorSection from '@/components/ErrorSection';
+import type { DeliveryType } from '@/apis/mutations';
 
-function DeliveryMethodSection() {
-  const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState<string>('Express');
+interface DeliveryMethodSectionProps {
+  deliveryType: DeliveryType;
+  onDeliveryTypeChange: (type: DeliveryType) => void;
+}
+
+function DeliveryMethodSection({ deliveryType, onDeliveryTypeChange }: DeliveryMethodSectionProps) {
+  const { items, getItemQuantity } = useCart();
 
   return (
-    <styled.section css={{ p: 5, bgColor: 'background.01_white' }}>
-      <Text variant="H2_Bold">배송 방식</Text>
+    <ErrorBoundary fallback={<ErrorSection />}>
+      <Suspense>
+        <SuspenseQueries queries={[userQueryOptions, gradeShippingListQueryOptions, productsQueryOptions]}>
+          {([
+            { data: user },
+            {
+              data: { gradeShippingList },
+            },
+            {
+              data: { products },
+            },
+          ]) => {
+            const cartTotal = products
+              .filter(product => isInCart(product.id, items))
+              .reduce((totalPrice, product) => {
+                return totalPrice + product.price * getItemQuantity(product.id);
+              }, 0);
 
-      <Spacing size={4} />
+            const premiumPrice = getPremiumShippingPrice({
+              grade: user.grade,
+              cartTotal,
+              gradeShippingList,
+            });
 
-      <Stack gap={4}>
-        <DeliveryItem
-          title="Express"
-          description="3-5일 후 도착 예정"
-          icon={<DeliveryIcon size={28} />}
-          price={0}
-          isSelected={selectedDeliveryMethod === 'Express'}
-          onClick={() => setSelectedDeliveryMethod('Express')}
-        />
-        <DeliveryItem
-          title="Premium"
-          description="당일 배송"
-          icon={<RocketIcon size={28} />}
-          price={5}
-          isSelected={selectedDeliveryMethod === 'Premium'}
-          onClick={() => setSelectedDeliveryMethod('Premium')}
-        />
-      </Stack>
-    </styled.section>
+            return (
+              <styled.section css={{ p: 5, bgColor: 'background.01_white' }}>
+                <Text variant="H2_Bold">배송 방식</Text>
+
+                <Spacing size={4} />
+
+                <Stack gap={4}>
+                  <DeliveryItem
+                    title="Express"
+                    description="2~3일 후 도착 예정"
+                    icon={<DeliveryIcon size={28} />}
+                    price={0}
+                    isSelected={deliveryType === 'EXPRESS'}
+                    onClick={() => onDeliveryTypeChange('EXPRESS')}
+                  />
+                  <DeliveryItem
+                    title="Premium"
+                    description="당일 배송"
+                    icon={<RocketIcon size={28} />}
+                    price={premiumPrice}
+                    isSelected={deliveryType === 'PREMIUM'}
+                    onClick={() => onDeliveryTypeChange('PREMIUM')}
+                  />
+                </Stack>
+              </styled.section>
+            );
+          }}
+        </SuspenseQueries>
+      </Suspense>
+    </ErrorBoundary>
   );
+}
+
+function getPremiumShippingPrice({
+  grade,
+  cartTotal,
+  gradeShippingList,
+}: {
+  grade: GRADE;
+  cartTotal: number;
+  gradeShippingList: Array<{ type: GRADE; shippingFee: number; freeShippingThreshold: number }>;
+}) {
+  const gradeShipping = gradeShippingList.find(g => g.type === grade);
+  if (!gradeShipping) {
+    return 0;
+  }
+
+  const isFreeShipping = cartTotal >= gradeShipping.freeShippingThreshold;
+  return isFreeShipping ? 0 : gradeShipping.shippingFee;
 }
 
 function DeliveryItem({
@@ -80,6 +138,10 @@ function DeliveryItem({
       </Text>
     </Flex>
   );
+}
+
+function isInCart(productId: number, products: CartItem[]) {
+  return products.some(product => product.productId === productId);
 }
 
 export default DeliveryMethodSection;

@@ -9,7 +9,7 @@ import { capitalize } from 'es-toolkit/string';
 function CurrentLevelSection() {
   return (
     <ErrorBoundary fallback={<ErrorSection />}>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense>
         <SuspenseQueries queries={[userQueryOptions, gradePointQueryOptions]}>
           {([
             { data: user },

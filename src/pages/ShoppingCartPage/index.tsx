@@ -5,11 +5,19 @@ import ShoppingCartSection from './components/ShoppingCartSection';
 import type { DeliveryType } from '@/apis/mutations';
 
 function ShoppingCartPage() {
+  return (
+    <>
+      <ShoppingCartSection />
+      <PaymentSection />
+    </>
+  );
+}
+
+function PaymentSection() {
   const [deliveryType, setDeliveryType] = useState<DeliveryType>('EXPRESS');
 
   return (
     <>
-      <ShoppingCartSection />
       <DeliveryMethodSection deliveryType={deliveryType} onDeliveryTypeChange={setDeliveryType} />
       <CheckoutSection deliveryType={deliveryType} />
     </>

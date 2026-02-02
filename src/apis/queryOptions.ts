@@ -7,6 +7,7 @@ import {
   getProduct,
   getProductRecommend,
   getGradeShipping,
+  getRecentProductList,
 } from './fetcher';
 
 export type { GRADE, Product } from './schema';
@@ -46,4 +47,9 @@ export const recommendedProductsQueryOptions = (productId: number) =>
 export const gradeShippingListQueryOptions = queryOptions({
   queryKey: ['gradeShippingList'],
   queryFn: getGradeShipping,
+});
+
+export const recentProductsQueryOptions = queryOptions({
+  queryKey: ['recentProductList'],
+  queryFn: getRecentProductList,
 });

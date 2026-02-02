@@ -1,26 +1,11 @@
 import { Flex, styled } from 'styled-system/jsx';
 import { Spacing, Text } from '@/ui-lib';
-import { http } from '@/utils/http';
-import { queryOptions } from '@tanstack/react-query';
 import { ErrorBoundary, Suspense } from '@suspensive/react';
 import { SuspenseQuery } from '@suspensive/react-query';
 import ErrorSection from '@/components/ErrorSection';
-
 import { GetFormattedPrice } from '@/components/GetFormattedPrice';
-
-type RecentProduct = {
-  id: number;
-  thumbnail: string;
-  name: string;
-  price: number;
-};
-
-const recentProductsQueryOptions = queryOptions({
-  queryKey: ['recentProductList'],
-  queryFn: () => {
-    return http.get<{ recentProducts: RecentProduct[] }>('/api/recent/product/list');
-  },
-});
+import { recentProductsQueryOptions } from '@/apis/queryOptions';
+import type { RecentProduct } from '@/apis/schema';
 
 function RecentPurchaseSection() {
   return (

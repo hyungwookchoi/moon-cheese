@@ -1,5 +1,5 @@
 import { http } from '@/utils/http';
-import type { ExchangeRate, User, GradePoint, Product, GradeShipping, Order } from './schema';
+import type { ExchangeRate, User, GradePoint, Product, GradeShipping, Order, RecentProduct } from './schema';
 
 export const getExchangeRate = () => {
   return http.get<{ exchangeRate: ExchangeRate }>('/api/exchange-rate');
@@ -31,4 +31,8 @@ export const getGradeShipping = () => {
 
 export const postProductPurchase = (order: Order) => {
   return http.post<Order>('/api/product/purchase', order);
+};
+
+export const getRecentProductList = () => {
+  return http.get<{ recentProducts: RecentProduct[] }>('/api/recent/product/list');
 };

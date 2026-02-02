@@ -8,21 +8,20 @@ import { capitalize } from 'es-toolkit/string';
 
 function CurrentLevelSection() {
   return (
-    <ErrorBoundary fallback={<ErrorSection />}>
-      <Suspense>
-        <SuspenseQueries queries={[userQueryOptions, gradePointQueryOptions]}>
-          {([
-            { data: user },
-            {
-              data: { gradePointList },
-            },
-          ]) => {
-            return (
-              <styled.section css={{ px: 5, py: 4 }}>
-                <Text variant="H1_Bold">현재 등급</Text>
+    <styled.section css={{ px: 5, py: 4 }}>
+      <Text variant="H1_Bold">현재 등급</Text>
 
-                <Spacing size={4} />
-
+      <Spacing size={4} />
+      <ErrorBoundary fallback={<ErrorSection />}>
+        <Suspense>
+          <SuspenseQueries queries={[userQueryOptions, gradePointQueryOptions]}>
+            {([
+              { data: user },
+              {
+                data: { gradePointList },
+              },
+            ]) => {
+              return (
                 <Box bg="background.01_white" css={{ px: 5, py: 4, rounded: '2xl' }}>
                   <Flex flexDir="column" gap={2}>
                     <Text variant="H2_Bold">{capitalize(user.grade)}</Text>
@@ -51,12 +50,12 @@ function CurrentLevelSection() {
                     </Flex>
                   </Flex>
                 </Box>
-              </styled.section>
-            );
-          }}
-        </SuspenseQueries>
-      </Suspense>
-    </ErrorBoundary>
+              );
+            }}
+          </SuspenseQueries>
+        </Suspense>
+      </ErrorBoundary>
+    </styled.section>
   );
 }
 

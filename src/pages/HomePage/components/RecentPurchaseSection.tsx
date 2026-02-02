@@ -1,5 +1,11 @@
 import { Flex, styled } from 'styled-system/jsx';
 import { Spacing, Text } from '@/ui-lib';
+import { ErrorBoundary, Suspense } from '@suspensive/react';
+import { SuspenseQuery } from '@suspensive/react-query';
+import ErrorSection from '@/components/ErrorSection';
+import { GetFormattedPrice } from '@/components/GetFormattedPrice';
+import { recentProductsQueryOptions } from '@/apis/queryOptions';
+import type { RecentProduct } from '@/apis/schema';
 
 function RecentPurchaseSection() {
   return (
@@ -8,60 +14,64 @@ function RecentPurchaseSection() {
 
       <Spacing size={4} />
 
-      <Flex
-        css={{
-          bg: 'background.01_white',
-          px: 5,
-          py: 4,
-          gap: 4,
-          rounded: '2xl',
-        }}
-        direction={'column'}
-      >
-        <Flex
-          css={{
-            gap: 4,
-          }}
-        >
-          <styled.img
-            src="/moon-cheese-images/cheese-1-1.jpg"
-            alt="item"
-            css={{
-              w: '60px',
-              h: '60px',
-              objectFit: 'cover',
-              rounded: 'xl',
+      <ErrorBoundary fallback={<ErrorSection />}>
+        <Suspense>
+          <SuspenseQuery
+            {...recentProductsQueryOptions}
+            select={({ recentProducts }) => {
+              return sumPricesByProductId(recentProducts);
             }}
-          />
-          <Flex flexDir="column" gap={1}>
-            <Text variant="B2_Medium">월레스의 오리지널 웬슬리데일</Text>
-            <Text variant="H1_Bold">$12.99</Text>
-          </Flex>
-        </Flex>
-
-        <Flex
-          css={{
-            gap: 4,
-          }}
-        >
-          <styled.img
-            src="/moon-cheese-images/cheese-2-1.jpg"
-            alt="item"
-            css={{
-              w: '60px',
-              h: '60px',
-              objectFit: 'cover',
-              rounded: 'xl',
+          >
+            {({ data: recentProducts }) => {
+              return (
+                <Flex
+                  css={{
+                    bg: 'background.01_white',
+                    px: 5,
+                    py: 4,
+                    gap: 4,
+                    rounded: '2xl',
+                  }}
+                  direction={'column'}
+                >
+                  {recentProducts.map(({ id, thumbnail, name, price }) => (
+                    <Flex key={id} css={{ gap: 4 }}>
+                      <styled.img
+                        src={thumbnail}
+                        alt="item"
+                        css={{ w: '60px', h: '60px', objectFit: 'cover', rounded: 'xl' }}
+                      />
+                      <Flex flexDir="column" gap={1}>
+                        <Text variant="B2_Medium">{name}</Text>
+                        <GetFormattedPrice price={price}>
+                          {price => <Text variant="H1_Bold">{price}</Text>}
+                        </GetFormattedPrice>
+                      </Flex>
+                    </Flex>
+                  ))}
+                </Flex>
+              );
             }}
-          />
-          <Flex flexDir="column" gap={1}>
-            <Text variant="B2_Medium">그랜드 데이 아웃 체다</Text>
-            <Text variant="H1_Bold">$14.87</Text>
-          </Flex>
-        </Flex>
-      </Flex>
+          </SuspenseQuery>
+        </Suspense>
+      </ErrorBoundary>
     </styled.section>
   );
 }
 
 export default RecentPurchaseSection;
+
+function sumPricesByProductId(recentProducts: RecentProduct[]): RecentProduct[] {
+  const productMap = new Map<number, RecentProduct>();
+
+  for (const product of recentProducts) {
+    const existing = productMap.get(product.id);
+    if (existing) {
+      existing.price += product.price;
+    } else {
+      productMap.set(product.id, { ...product });
+    }
+  }
+
+  return Array.from(productMap.values());
+}

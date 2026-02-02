@@ -1,3 +1,4 @@
+import type { CurrencyType } from '@/providers/CurrencyProvider';
 import { Switch as ArkSwitch, switchAnatomy } from '@ark-ui/react';
 import { css, cx, type RecipeVariantProps, sva } from 'styled-system/css';
 
@@ -74,8 +75,6 @@ export const currencyToggleRecipe = sva({
     },
   },
 });
-
-export type CurrencyType = 'USD' | 'KRW';
 
 export type CurrencyToggleProps = CurrencyToggleVariantProps & {
   value?: CurrencyType;

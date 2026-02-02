@@ -29,45 +29,47 @@ function RecentPurchaseSection() {
 
       <Spacing size={4} />
 
-      <Flex
-        css={{
-          bg: 'background.01_white',
-          px: 5,
-          py: 4,
-          gap: 4,
-          rounded: '2xl',
-        }}
-        direction={'column'}
-      >
-        <ErrorBoundary fallback={<ErrorSection />}>
-          <Suspense>
-            <SuspenseQuery
-              {...recentProductsQueryOptions}
-              select={({ recentProducts }) => {
-                return sumPricesByProductId(recentProducts);
-              }}
-            >
-              {({ data: recentProducts }) => {
-                return recentProducts.map(({ id, thumbnail, name, price }) => (
-                  <Flex key={id} css={{ gap: 4 }}>
-                    <styled.img
-                      src={thumbnail}
-                      alt="item"
-                      css={{ w: '60px', h: '60px', objectFit: 'cover', rounded: 'xl' }}
-                    />
-                    <Flex flexDir="column" gap={1}>
-                      <Text variant="B2_Medium">{name}</Text>
-                      <GetFormattedPrice price={price}>
-                        {price => <Text variant="H1_Bold">{price}</Text>}
-                      </GetFormattedPrice>
+      <ErrorBoundary fallback={<ErrorSection />}>
+        <Suspense>
+          <SuspenseQuery
+            {...recentProductsQueryOptions}
+            select={({ recentProducts }) => {
+              return sumPricesByProductId(recentProducts);
+            }}
+          >
+            {({ data: recentProducts }) => {
+              return (
+                <Flex
+                  css={{
+                    bg: 'background.01_white',
+                    px: 5,
+                    py: 4,
+                    gap: 4,
+                    rounded: '2xl',
+                  }}
+                  direction={'column'}
+                >
+                  {recentProducts.map(({ id, thumbnail, name, price }) => (
+                    <Flex key={id} css={{ gap: 4 }}>
+                      <styled.img
+                        src={thumbnail}
+                        alt="item"
+                        css={{ w: '60px', h: '60px', objectFit: 'cover', rounded: 'xl' }}
+                      />
+                      <Flex flexDir="column" gap={1}>
+                        <Text variant="B2_Medium">{name}</Text>
+                        <GetFormattedPrice price={price}>
+                          {price => <Text variant="H1_Bold">{price}</Text>}
+                        </GetFormattedPrice>
+                      </Flex>
                     </Flex>
-                  </Flex>
-                ));
-              }}
-            </SuspenseQuery>
-          </Suspense>
-        </ErrorBoundary>
-      </Flex>
+                  ))}
+                </Flex>
+              );
+            }}
+          </SuspenseQuery>
+        </Suspense>
+      </ErrorBoundary>
     </styled.section>
   );
 }

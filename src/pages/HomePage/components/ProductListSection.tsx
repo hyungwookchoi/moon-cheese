@@ -43,13 +43,17 @@ function ProductListSection() {
                 />
                 <Grid gridTemplateColumns="repeat(2, 1fr)" rowGap={9} columnGap={4} p={5}>
                   {products.map(product => {
-                    switch (product.category) {
+                    const category = product.category;
+                    switch (category) {
                       case 'CHEESE':
                         return <CheeseProductItem product={product} />;
                       case 'CRACKER':
                         return <CrackerProductItem product={product} />;
                       case 'TEA':
                         return <TeaProductItem product={product} />;
+                      default:
+                        category satisfies never;
+                        return null;
                     }
                   })}
                 </Grid>

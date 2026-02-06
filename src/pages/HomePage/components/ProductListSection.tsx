@@ -18,7 +18,7 @@ function ProductListSection() {
 
   return (
     <styled.section bg="background.01_white">
-      <AsyncBoundary fallback={<ProductListLoader />}>
+      <AsyncBoundary loadingFallback={<ProductListLoader />}>
         <SuspenseQuery
           {...productsQueryOptions}
           select={data => {
@@ -43,8 +43,7 @@ function ProductListSection() {
                 />
                 <Grid gridTemplateColumns="repeat(2, 1fr)" rowGap={9} columnGap={4} p={5}>
                   {products.map(product => {
-                    const category = product.category;
-                    switch (category) {
+                    switch (product.category) {
                       case 'CHEESE':
                         return <CheeseProductItem product={product} />;
                       case 'CRACKER':
@@ -52,7 +51,7 @@ function ProductListSection() {
                       case 'TEA':
                         return <TeaProductItem product={product} />;
                       default:
-                        category satisfies never;
+                        product satisfies never;
                         return null;
                     }
                   })}
@@ -181,7 +180,7 @@ function ProductListLoader() {
 }
 
 function isMatchCategory(product: Product, category: string) {
-  return product.category === category;
+  return category === 'ALL' || product.category === category;
 }
 
 export default ProductListSection;

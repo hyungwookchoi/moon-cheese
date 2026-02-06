@@ -6,6 +6,7 @@ import ErrorSection from '@/components/ErrorSection';
 import { GetFormattedPrice } from '@/components/GetFormattedPrice';
 import { recentProductsQueryOptions } from '@/apis/queryOptions';
 import type { RecentProduct } from '@/apis/schema';
+import { groupBy, sumBy } from 'es-toolkit';
 
 function RecentPurchaseSection() {
   return (
@@ -59,19 +60,13 @@ function RecentPurchaseSection() {
   );
 }
 
-export default RecentPurchaseSection;
-
 function sumPricesByProductId(recentProducts: RecentProduct[]): RecentProduct[] {
-  const productMap = new Map<number, RecentProduct>();
+  const groupedProducts = groupBy(recentProducts, product => product.id);
 
-  for (const product of recentProducts) {
-    const existing = productMap.get(product.id);
-    if (existing) {
-      existing.price += product.price;
-    } else {
-      productMap.set(product.id, { ...product });
-    }
-  }
-
-  return Array.from(productMap.values());
+  return Object.values(groupedProducts).map(products => ({
+    ...products[0],
+    price: sumBy(products, product => product.price),
+  }));
 }
+
+export default RecentPurchaseSection;

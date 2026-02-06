@@ -10,20 +10,30 @@ function BannerSection() {
         position: 'relative',
       }}
     >
-      <styled.img src={IMAGE_SRC} alt="banner" css={{ w: 'full', aspectRatio: 375 / 300, objectFit: 'cover' }} />
-      <styled.img
-        src={LOGO_TEXT_SRC}
-        alt="banner"
-        css={{
-          w: '80%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          objectFit: 'contain',
-          position: 'absolute',
-          bottom: '0.2rem',
-        }}
-      />
+      <MoonCheeseImage />
+      <MoonCheeseLogoText />
     </Box>
+  );
+}
+
+function MoonCheeseImage() {
+  return <styled.img src={IMAGE_SRC} alt="banner" css={{ w: 'full', aspectRatio: 375 / 300, objectFit: 'cover' }} />;
+}
+
+function MoonCheeseLogoText() {
+  return (
+    <styled.img
+      src={LOGO_TEXT_SRC}
+      alt="banner"
+      css={{
+        w: '80%',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        objectFit: 'contain',
+        position: 'absolute',
+        bottom: '0.2rem',
+      }}
+    />
   );
 }
 
